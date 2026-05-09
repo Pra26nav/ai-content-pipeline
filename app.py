@@ -252,13 +252,18 @@ references = st.text_area(
 st.markdown("<div style='height:0.5rem'></div>", unsafe_allow_html=True)
 st.markdown('<div class="section-label">✦ Output Settings</div>', unsafe_allow_html=True)
 
-col1, col2 = st.columns([1, 1])
+col1, col2, col3 = st.columns([1, 1, 1])
 with col1:
+    output_format = st.selectbox(
+        "Output Format",
+        ["Blog Post", "LinkedIn Post", "Twitter Thread", "Email Newsletter"]
+    )
+with col2:
     tone = st.selectbox(
         "Writing Tone",
         ["Informative & Conversational", "Professional & Formal", "Casual & Friendly", "Technical & In-depth"]
     )
-with col2:
+with col3:
     word_count = st.slider("Word Count", min_value=300, max_value=1500, value=700, step=100)
 
 st.markdown("<div style='height:1rem'></div>", unsafe_allow_html=True)
@@ -282,14 +287,35 @@ if run and topic:
             expected_output="Structured research brief with key facts, trends, and examples.",
             agent=researcher
         )
+        # Format-specific instructions
+        format_instructions = {
+            "Blog Post": f"""Write a blog post about '{topic}'.
+                Structure: catchy title, intro, 3-4 sections with subheadings, conclusion.
+                Length: {word_count} words. Tone: {tone}.""",
+
+            "LinkedIn Post": f"""Write a LinkedIn post about '{topic}'.
+                Structure: strong hook line, 3-5 short punchy paragraphs, 1 insight or CTA at end.
+                Max 300 words. No subheadings. Use line breaks for readability.
+                Tone: {tone}. Add 5 relevant hashtags at the end.""",
+
+            "Twitter Thread": f"""Write a Twitter/X thread about '{topic}'.
+                Format: numbered tweets (1/, 2/, 3/ etc.), 15-20 tweets max.
+                Each tweet max 280 chars. Start with a hook tweet. End with a summary tweet.
+                Tone: {tone}. Make it punchy and shareable.""",
+
+            "Email Newsletter": f"""Write an email newsletter about '{topic}'.
+                Structure: subject line, greeting, intro hook, 3 key sections, CTA, sign-off.
+                Length: {word_count} words. Tone: {tone}.
+                Make it feel personal and valuable to the reader.""",
+        }
+
         write_task = Task(
-            description=f"""Using the research brief, write a blog post about '{topic}'.
-            Structure: catchy title, intro, 3-4 sections with subheadings, conclusion.
-            Length: {word_count} words. Tone: {tone}.""",
-            expected_output=f"Complete blog post ~{word_count} words.",
+            description=f"Using the research brief: {format_instructions[output_format]}",
+            expected_output=f"Complete {output_format} about the topic.",
             agent=writer,
             context=[research_task]
         )
+        
         edit_task = Task(
             description="""Review and polish the blog post.
             Fix: awkward phrasing, repetition, weak transitions.
@@ -312,12 +338,13 @@ if run and topic:
 
     st.success("✦ Blog post ready")
 
-    st.markdown('<div class="section-label" style="margin-top:2rem;">✦ Output</div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="section-label" style="margin-top:2rem;">✦ {output_format}</div>', unsafe_allow_html=True)
     st.markdown(f'<div class="output-box">{final_text}</div>', unsafe_allow_html=True)
 
     st.markdown("<div style='height:1rem'></div>", unsafe_allow_html=True)
 
-    filename = topic[:40].replace(" ", "_").lower() + "_blog.md"
+    fmt_slug = output_format.lower().replace(" ", "_")
+    filename = topic[:40].replace(" ", "_").lower() + f"_{fmt_slug}.md"
     st.download_button(
         label="⬇ Download as Markdown",
         data=final_text,
