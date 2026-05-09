@@ -1,14 +1,18 @@
 from crewai import Agent
+from crewai_tools import SerperDevTool
 from dotenv import load_dotenv
 
 load_dotenv()
 
-# CrewAI 1.x — pass LLM as string "provider/model"
+# Web search tool — researcher will google in real time
+search_tool = SerperDevTool()
+
 researcher = Agent(
     role="Research Specialist",
-    goal="Find key facts, trends, and insights about the given topic",
-    backstory="Expert researcher who digs deep into topics and extracts the most relevant, accurate information.",
+    goal="Find the most current, accurate facts, trends, and insights about the given topic using web search",
+    backstory="Expert researcher who searches the web to find real, up-to-date information. Never relies on old knowledge — always verifies with live search results.",
     llm="groq/llama-3.3-70b-versatile",
+    tools=[search_tool],  # WEB SEARCH ENABLED
     verbose=True
 )
 
