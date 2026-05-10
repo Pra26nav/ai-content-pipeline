@@ -31,3 +31,11 @@ editor = Agent(
     llm="groq/llama-3.3-70b-versatile",
     verbose=True
 )
+
+critic = Agent(
+    role="Content Quality Critic",
+    goal="Evaluate content quality and provide a structured score across multiple professional parameters",
+    backstory="Expert content strategist with 15 years experience across SEO, journalism, and digital marketing. Provides brutally honest, data-driven content assessments.",
+    llm="groq/llama-3.3-70b-versatile",
+    verbose=True
+)
