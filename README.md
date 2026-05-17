@@ -33,3 +33,25 @@ Enter any topic → get publication-ready blog post saved to `.txt`
 ## Sample Output
 Topic: *"How AI Agents are changing software development"*
 → See `how_ai_agents_are_changing_software_development_blog.txt`
+
+## Architecture
+
+```
+User Input (Topic + Keywords + Tone + Format)
+         ↓
+┌─────────────────────────────────────────┐
+│           CrewAI Sequential Pipeline    │
+│                                         │
+│  🔍 Researcher  →  Real-time web search │
+│       ↓         (SerperDev Tool)        │
+│  ✍️  Writer    →  Format-specific draft │
+│       ↓                                 │
+│  ✨  Editor    →  Polish + flow         │
+│       ↓                                 │
+│  🎯  Critic    →  6-parameter scoring   │
+└─────────────────────────────────────────┘
+         ↓
+Output: Blog / LinkedIn / Twitter / Email
++ Content Score + Keyword Recommendations
++ Download (.md / .pdf)
+```
