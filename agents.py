@@ -39,3 +39,53 @@ critic = Agent(
     llm="groq/llama-3.3-70b-versatile",
     verbose=True
 )
+
+"""
+agents.py
+Defines the 4 CrewAI agents used in the content pipeline.
+- researcher: Real-time web search using SerperDev
+- writer: Format-specific content generation
+- editor: Polish and flow improvement
+- critic: 6-parameter content scoring
+"""
+from crewai import Agent
+from crewai_tools import SerperDevTool
+from dotenv import load_dotenv
+
+load_dotenv()
+
+# Web search tool for real-time research
+search_tool = SerperDevTool()
+
+researcher = Agent(
+    role="Research Specialist",
+    goal="Find key facts, trends, and insights using live web search",
+    backstory="Expert researcher who finds accurate, up-to-date information.",
+    llm="groq/llama-3.1-8b-instant",
+    tools=[search_tool],
+    verbose=True
+)
+
+writer = Agent(
+    role="Content Writer",
+    goal="Write engaging, format-specific content using research provided",
+    backstory="Skilled writer who produces compelling content in any format.",
+    llm="groq/llama-3.1-8b-instant",
+    verbose=True
+)
+
+editor = Agent(
+    role="Editor",
+    goal="Polish content for flow, clarity, and professional tone",
+    backstory="Seasoned editor with sharp eye for quality.",
+    llm="groq/llama-3.1-8b-instant",
+    verbose=True
+)
+
+critic = Agent(
+    role="Content Quality Critic",
+    goal="Score content on 6 professional parameters and output structured JSON",
+    backstory="Expert content strategist providing data-driven assessments.",
+    llm="groq/llama-3.1-8b-instant",
+    verbose=True
+)
